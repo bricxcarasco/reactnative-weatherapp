@@ -3,15 +3,17 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import * as Location from "expo-location";
 
-import keys from "./config/keys";
+import Keys from "./app/config/keys";
+
+import WeatherInfo from "./app/components/WeatherInfo";
 
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [currentWeather, setCurrentWeather] = useState(null);
+  const [unitSystem, setUnitSystem] = useState("metric");
 
   useEffect(() => {
     loadMapFunction();
-    console.log(currentWeather);
   }, []);
 
   const loadMapFunction = async () => {
@@ -24,7 +26,7 @@ export default function App() {
       const location = await Location.getCurrentPositionAsync();
       const { latitude, longitude } = location.coords;
 
-      const weatherUrl = `${keys.BASE_WEATHER_URL}?lat=${latitude}&lon=${longitude}&appid=${keys.WEATHER_API_KEY}`;
+      const weatherUrl = `${Keys.BASE_WEATHER_URL}?lat=${latitude}&lon=${longitude}&units=${unitSystem}&appid=${Keys.WEATHER_API_KEY}`;
       const weatherResponse = await fetch(weatherUrl);
       const weatherResponseJson = await weatherResponse.json();
 
@@ -39,13 +41,12 @@ export default function App() {
   };
 
   if (currentWeather) {
-    const {
-      main: { temp },
-    } = currentWeather;
     return (
       <View style={styles.container}>
-        <Text>{temp}</Text>
         <StatusBar style="auto" />
+        <View style={styles.main}>
+          <WeatherInfo currentWeather={currentWeather} />
+        </View>
       </View>
     );
   } else {
@@ -62,7 +63,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+  },
+  main: {
+    justifyContent: "center",
+    flex: 1,
   },
 });

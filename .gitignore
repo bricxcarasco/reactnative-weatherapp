@@ -9,7 +9,7 @@ npm-debug.*
 *.orig.*
 web-build/
 
-config
+app/config
 
 # macOS
 .DS_Store
