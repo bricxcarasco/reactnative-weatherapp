@@ -1,11 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import * as Location from "expo-location";
 
 import Keys from "./app/config/keys";
+import Color from "./app/constants/colors";
 
 import WeatherInfo from "./app/components/WeatherInfo";
+import UnitPicker from "./app/components/UnitPicker";
+import ReloadIcon from "./app/components/ReloadIcon";
 
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -14,9 +17,11 @@ export default function App() {
 
   useEffect(() => {
     loadMapFunction();
-  }, []);
+  }, [unitSystem]);
 
   const loadMapFunction = async () => {
+    setCurrentWeather(null);
+    setErrorMessage(null);
     try {
       let { status } = await Location.requestPermissionsAsync();
       if (status !== "granted") {
@@ -45,14 +50,23 @@ export default function App() {
       <View style={styles.container}>
         <StatusBar style="auto" />
         <View style={styles.main}>
+          <UnitPicker unitSystem={unitSystem} setUnitSystem={setUnitSystem} />
+          <ReloadIcon loadMapFunction={loadMapFunction} />
           <WeatherInfo currentWeather={currentWeather} />
         </View>
+      </View>
+    );
+  } else if (errorMessage) {
+    return (
+      <View style={styles.container}>
+        <Text>{errorMessage}</Text>
+        <StatusBar style="auto" />
       </View>
     );
   } else {
     return (
       <View style={styles.container}>
-        <Text>{errorMessage}</Text>
+        <ActivityIndicator size="large" color={Color.PRIMARY_COLOR} />
         <StatusBar style="auto" />
       </View>
     );
