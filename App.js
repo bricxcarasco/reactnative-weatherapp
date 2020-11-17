@@ -9,6 +9,7 @@ import Color from "./app/constants/colors";
 import WeatherInfo from "./app/components/WeatherInfo";
 import UnitPicker from "./app/components/UnitPicker";
 import ReloadIcon from "./app/components/ReloadIcon";
+import WeatherDetails from "./app/components/WeatherDetails";
 
 export default function App() {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -54,12 +55,17 @@ export default function App() {
           <ReloadIcon loadMapFunction={loadMapFunction} />
           <WeatherInfo currentWeather={currentWeather} />
         </View>
+        <WeatherDetails
+          currentWeather={currentWeather}
+          unitSystem={unitSystem}
+        />
       </View>
     );
   } else if (errorMessage) {
     return (
       <View style={styles.container}>
-        <Text>{errorMessage}</Text>
+        <ReloadIcon loadMapFunction={loadMapFunction} />
+        <Text style={styles.errorText}>{errorMessage}</Text>
         <StatusBar style="auto" />
       </View>
     );
@@ -82,5 +88,10 @@ const styles = StyleSheet.create({
   main: {
     justifyContent: "center",
     flex: 1,
+  },
+  errorText: {
+    fontSize: 30,
+    color: Color.PRIMARY_COLOR,
+    textAlign: "center",
   },
 });
